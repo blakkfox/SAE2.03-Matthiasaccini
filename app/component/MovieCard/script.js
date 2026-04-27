@@ -8,6 +8,7 @@ MovieCard.format = function (data, css = "") {
     html = html.replaceAll("{{cssClass}}", css);
     html = html.replaceAll("{{image}}", "../server/images/" + data.image);
     html = html.replaceAll("{{name}}", data.name);
+    html = html.replaceAll("{{id}}", data.id);
   return html;
 };
 

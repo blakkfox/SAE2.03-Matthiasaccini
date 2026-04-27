@@ -15,5 +15,12 @@ DataMovie.requestMovies = async function(){
     // Enfin, on retourne ces données.
     return data;
 }
+DataMovie.requestDetails = async function (id) {
+    let answer = await fetch(HOST_URL + "/server/script.php?todo=readmovie&id=" + id);
+    let texteBrut = await answer.text();
+
+    let data = JSON.parse(texteBrut);
+    return data;
+}
 
 export {DataMovie};

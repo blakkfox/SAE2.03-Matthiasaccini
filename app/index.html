@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
     <title>SAE2.03 APP</title>
@@ -9,14 +9,14 @@
 
   <body>
     <header id="header"></header>
-    <section id="movie"></section>
     <section id="content"></section>
 
     <script type="module">
-      import { DataMovie} from "./data/dataMovie.js"
+      import { DataMovie } from "./data/dataMovie.js";
       import { NavBar } from "./component/NavBar/script.js";
       import { Movie } from "./component/Movie/script.js";
-      
+      import { Detail } from "./component/Detail/script.js";
+
       let data = await DataMovie.requestMovies();
 
       // Controleur
@@ -26,9 +26,19 @@
 
       C.handlerAbout = function () {
         alert(
-          "Ceci est une base de projet pour la SAE2.03 édition 2025. Bonne chance !"
+          "Ceci est une base de projet pour la SAE2.03 édition 2025. Bonne chance !",
         );
       };
+      C.handlerDetail = async function (id) {
+        let movieData = await DataMovie.requestDetails(id);
+        let html = Detail.format(movieData);
+        let zonePrincipale = document.querySelector("#content");
+        zonePrincipale.innerHTML = html;
+      };
+
+      C.handlerHome = function () {
+        window.location.reload();
+      }
 
       C.start = function () {
         V.renderNavBar("C.handlerAbout()");
@@ -48,12 +58,14 @@
       V.renderNavBar = function (hAbout) {
         let header = document.querySelector("#header");
         header.innerHTML = NavBar.format(hAbout);
-        
       };
-      V.renderMovie = function (data,css="") {
-        let movie = document.querySelector("#movie");
-        movie.innerHTML = Movie.format(data,css);
-
+      V.renderMovie = function (data, css = "") {
+        let movie = document.querySelector("#content");
+        movie.innerHTML = Movie.format(data, css);
+      };
+      V.renderDetail = function (hDetail, css = "") {
+        let detail = document.querySelector("#content");
+        detail.innerHTML = Detail.format(hDetail, css);
       };
 
       C.start(); // Démarre l'application

@@ -1,5 +1,10 @@
 <?php
+// Activer le rapport d'erreurs PHP
+error_reporting(E_ALL);
 
+// Forcer l'affichage des erreurs à l'écran
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 /**
  * DÉVELOPPEMENT UNIQUEMENT — À retirer avant la mise en production.
  * Force l'affichage des erreurs pour t'aider à déboguer pendant le projet.
@@ -35,6 +40,10 @@ if ( isset($_REQUEST['todo']) ){
     case 'readmovies':
       // Appelle la fonction de lecture du catalogue dans controller.php
       $data = readMoviesController();
+      break;
+      
+    case 'readmovie':
+      $data = readIDController();
       break;
 
     default: 

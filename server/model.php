@@ -76,4 +76,16 @@ function addMovie($n, $dir, $y, $len, $desc, $cat, $age, $img, $trl){
     return $res; // Retourne le nombre de lignes affectées
 }
 
+function getMovieByID($id){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+
+    $sql = "SELECT * FROM Movie WHERE id = :id";
+
+    $stmt = $cnx->prepare($sql);
+    $stmt->bindParam(':id' , $id);
+    $stmt->execute();
+    $res = $stmt->fetch(PDO::FETCH_OBJ);
+    return $res;
+}
+
 ?>

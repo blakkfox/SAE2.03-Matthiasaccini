@@ -60,5 +60,20 @@ function readMoviesController(){
     // Sinon, on retourne les films !
     return $movies;
 }
+function readIDController(){
+    if (!isset($_REQUEST['id']) || empty($_REQUEST['id'])){
+        return false;
+    }
+    $id = $_REQUEST['id'];
+
+    $movie = getMovieByID($id);
+    if ($movie === false){
+        return false;
+    }
+
+    return $movie;
+}
+
+
 
 ?>

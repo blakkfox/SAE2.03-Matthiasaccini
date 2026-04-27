@@ -1,0 +1,33 @@
+<section class="detail">
+  <h2 class="detail__title">{{name}}</h2>
+  <div class="detail__content">
+    <div class="detail__img-container">
+      <img class="detail__img" src="{{image}}" alt="image de film" />
+    </div>
+    <div class="detail__info">
+      <p class="detail__synop">{{description}}</p>
+      <p class="detail__rea">{{director}}</p>
+      <p class="detail__annee">{{year}}</p>
+      <p class="detail__category">{{id_category}}</p>
+      <p class="detail__min_age">{{min_age}}</p>
+    </div>
+  </div>
+  <iframe
+    width="560"
+    height="315"
+    src="{{trailer}}"
+    title="YouTube video player"
+    frameborder="0"
+    allow="
+      accelerometer;
+      autoplay;
+      clipboard-write;
+      encrypted-media;
+      gyroscope;
+      picture-in-picture;
+      web-share;
+    "
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+  ></iframe>
+</section>
