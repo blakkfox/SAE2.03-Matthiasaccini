@@ -13,12 +13,19 @@
 
     <script type="module">
       import { DataMovie } from "./data/dataMovie.js";
+      import { DataCategory } from "./data/dataCategory.js";
       import { NavBar } from "./component/NavBar/script.js";
       import { Movie } from "./component/Movie/script.js";
       import { Detail } from "./component/Detail/script.js";
+      import { MovieCategory } from "./component/Category/script.js";
 
       let data = await DataMovie.requestMovies();
-
+      let dataCategories = await DataCategory.requestCategories();
+      
+      const categoryNames = {};
+      for(let cat of dataCategories) {
+        categoryNames[cat.id] = cat.name;
+      }
       // Controleur
       // Rappel, écrire window.C plutôt que let C est nécessaire pour tester depuis la console du navigateur
       // Une fois l'application terminée, on pourrait remettre let C.
@@ -42,7 +49,7 @@
 
       C.start = function () {
         V.renderNavBar("C.handlerAbout()");
-        V.renderMovie(data);
+        V.renderCategories(data);
       };
 
       // Vue (contient tout ce qui est relatif à l'affichage)
@@ -67,8 +74,32 @@
         let detail = document.querySelector("#content");
         detail.innerHTML = Detail.format(hDetail, css);
       };
+      V.renderCategories = function (movies) {
+        let moviesByCategory = {};
+        for (let i = 0; i < movies.length; i++) {
+          let movie = movies[i];
+          let catId = movie.id_category;
+          
+          if (moviesByCategory[catId] === undefined) {
+            moviesByCategory[catId] = [];
+          }
+          moviesByCategory[catId].push(movie);
+        }
 
-      C.start(); // Démarre l'application
+        let htmlFinal = "";
+        
+        for (let catId in moviesByCategory) {
+          let categoryName = categoryNames[catId] || "Autre"; 
+          let categoryMovies = moviesByCategory[catId];
+          
+          htmlFinal += MovieCategory.format(categoryName, categoryMovies);
+        }
+
+        let content = document.querySelector("#content");
+        content.innerHTML = htmlFinal;
+      };
+
+      C.start();
     </script>
   </body>
 </html>

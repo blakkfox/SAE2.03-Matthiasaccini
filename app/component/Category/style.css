@@ -1,0 +1,11 @@
+.category-container {
+  margin: 2rem 3rem;
+}
+
+.category__title {
+  color: black;
+  border-bottom: 2px solid var(--color-gray-light);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}

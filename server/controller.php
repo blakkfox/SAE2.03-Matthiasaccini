@@ -73,7 +73,37 @@ function readIDController(){
 
     return $movie;
 }
-
+function readCategoriesController(){
+    $categories = getAllCategories();
+    
+    if ($categories === false) {
+        return false;
+    }
+    
+    return $categories;
+}
+function addProfileController(){
+    if ( !isset($_REQUEST['name']) || empty($_REQUEST['name']) ) {
+        return false;
+    }
+    $name = $_REQUEST['name'];
+    if (isset($_REQUEST['avatar'])) {
+        $avatar = $_REQUEST['avatar'];
+    } else {
+        $avatar = '';
+    }
+    if (isset($_REQUEST['min_age'])) {
+        $min_age = $_REQUEST['min_age'];
+    } else {
+        $min_age = 0;
+    }
+    $ok = addProfile($name, $avatar, $min_age);
+    if ($ok != 0){
+        return ["success" => true, "message" => "Le profil '$name' a bien été ajouté !"];
+    } else {
+        return false;
+    }
+}
 
 
 ?>

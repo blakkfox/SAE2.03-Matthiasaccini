@@ -1,5 +1,6 @@
 .navbar {
   display: flex;
+  
   justify-content: space-between;
   align-items: center;
   padding: 1rem 3rem;
@@ -18,4 +19,9 @@
       --_offset: 0.5rem;
     }
   }
+}
+
+.navbar__list{
+  display: flex;
+  flex-direction: row;
 }

@@ -45,7 +45,13 @@ if ( isset($_REQUEST['todo']) ){
     case 'readmovie':
       $data = readIDController();
       break;
-
+    case 'readcategories':
+      $data = readCategoriesController();
+      break;
+    case 'addprofile':
+      $data = addProfileController();
+      break;
+      
     default: 
       // L'action demandée n'existe pas
       echo json_encode(['success' => false, 'message' => '[error] Unknown todo value']);
