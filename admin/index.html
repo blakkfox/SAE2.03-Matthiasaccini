@@ -8,23 +8,27 @@
   </head>
   <body>
     <section id="log"></section>
-
-    <section id="movie-form"></section>
-    <section id="profile-form"></section>
+    
+    <div style="display: flex; gap: 2rem; align-items: flex-start; padding: 1rem;">
+        <section id="movie-form"></section>
+        <section id="profile-form"></section>
+    </div>
 
     <script type="module">
       import { Log } from "./component/Log/script.js";
       import { MovieForm } from "./component/MovieForm/script.js";
-      import { ProfileForm } from "./component/ProfileForm/script.js";
+      import { ProfileForm } from "./component/ProfileForm/script.js"; 
 
       import { DataMovie } from "./data/dataMovie.js";
-      import { DataProfile } from "./data/dataProfile.js";
+      import { DataProfile } from "./data/dataProfile.js"; 
+
+      window.profilesData = await DataProfile.read();
       window.C = {};
 
       C.start = function () {
-        V.renderLog("Démarrage de l'application");
-        V.renderForm("C.handlerAddMovie(event)");
-        V.renderFormProfile("C.handlerAddProfile(event)");
+        V.renderLog("Démarrage de l'administration");
+        V.renderFormMovie("C.handlerAddMovie(event)");
+        V.renderFormProfile("C.handlerSaveProfile(event)", "C.handlerSelectProfile()", window.profilesData);
       };
 
       C.handlerAddMovie = async function () {
@@ -32,16 +36,43 @@
         let fd = new FormData(form);
         let res = await DataMovie.add(fd);
         V.renderLog(res.message);
-        if (res.success) {
+        if (res.success) form.reset();
+      };
+
+
+      C.handlerSelectProfile = function () {
+        let select = document.querySelector("#select-profile");
+        let id = select.value;
+        let form = document.querySelector(".save-profile-form");
+
+        if (id === "") {
           form.reset();
+          document.querySelector("#idProfile").value = "";
+        } else {
+          let profile = window.profilesData.find(p => p.id == id);
+          if (profile) {
+            document.querySelector("#idProfile").value = profile.id;
+            document.querySelector("#nameProfile").value = profile.name;
+            document.querySelector("#avatarProfile").value = profile.avatar;
+            document.querySelector("#min_ageProfile").value = profile.min_age;
+          }
         }
       };
-      C.handlerAddProfile = async function () {
-        let form = document.querySelector(".add-profile-form");
+
+      C.handlerSaveProfile = async function () {
+        let form = document.querySelector(".save-profile-form");
         let fd = new FormData(form);
-        let res = await DataProfile.add(fd);
+        let res = await DataProfile.save(fd);
+        
         V.renderLog(res.message);
-        if (res.success) form.reset();
+
+        if (res.success) {
+          form.reset();
+          document.querySelector("#idProfile").value = "";
+
+          window.profilesData = await DataProfile.read();
+          V.renderFormProfile("C.handlerSaveProfile(event)", "C.handlerSelectProfile()", window.profilesData);
+        }
       };
 
       window.V = {};
@@ -51,13 +82,14 @@
         content.innerHTML = Log.format(txt);
       };
 
-      V.renderForm = async function (handler) {
+      V.renderFormMovie = async function (handler) {
         let content = document.querySelector("#movie-form");
         content.innerHTML = await MovieForm.format(handler);
       };
-      V.renderFormProfile = async function (handler) {
+
+      V.renderFormProfile = async function (hSubmit, hSelect, profiles) {
         let content = document.querySelector("#profile-form");
-        content.innerHTML = await ProfileForm.format(handler);
+        content.innerHTML = await ProfileForm.format(hSubmit, hSelect, profiles);
       };
 
       C.start();

@@ -1,7 +1,17 @@
 <div class="profile-form-container">
-  <h2>Ajouter un nouveau profil</h2>
+  <h2>Gérer les profils</h2>
 
-  <form class="add-profile-form" onsubmit="event.preventDefault(); {{handler}}">
+  <div class="form-group" style="margin-bottom: 1.5rem; background: var(--color-gray-dark); padding: 1rem; border-radius: 8px;">
+    <label for="select-profile">Choisir un profil à modifier :</label>
+    <select id="select-profile" onchange="{{handlerSelect}}">
+      <option value="">-- Créer un nouveau profil --</option>
+      {{profileOptions}}
+    </select>
+  </div>
+
+  <form class="save-profile-form" onsubmit="event.preventDefault(); {{handlerSubmit}}">
+    <input type="hidden" id="idProfile" name="id" value="" />
+
     <div class="form-group">
       <label for="nameProfile">Nom du profil *</label>
       <input type="text" id="nameProfile" name="name" required />
@@ -15,6 +25,7 @@
     <div class="form-group">
       <label for="min_ageProfile">Restriction d'âge *</label>
       <select id="min_ageProfile" name="min_age" required>
+        <option value="0">Tous publics</option>
         <option value="10">10 ans et +</option>
         <option value="12">12 ans et +</option>
         <option value="16">16 ans et +</option>
@@ -22,6 +33,6 @@
       </select>
     </div>
 
-    <button type="submit" class="btn-submit">Créer le profil</button>
+    <button type="submit" class="btn-submit">Enregistrer le profil</button>
   </form>
 </div>

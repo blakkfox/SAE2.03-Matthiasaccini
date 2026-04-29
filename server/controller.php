@@ -48,16 +48,16 @@ function addMovieController(){
  * * @return mixed Le tableau de films si tout va bien, sinon false.
  */
 function readMoviesController(){
- 
-    // Appel de la fonction getAllMovies déclarée dans model.php pour extraire de la BDD tous les films
-    $movies = getAllMovies();
+    if (isset($_REQUEST['age']) && $_REQUEST['age'] !== "") {
+        $age = intval($_REQUEST['age']);
+        $movies = getAllMovies($age);
+    } else {
+        $movies = getAllMovies();
+    }
     
-    // Si la requête a planté, le modèle renverra false. On transmet ce false au routeur.
     if ($movies === false) {
         return false;
     }
-    
-    // Sinon, on retourne les films !
     return $movies;
 }
 function readIDController(){
@@ -86,23 +86,41 @@ function addProfileController(){
     if ( !isset($_REQUEST['name']) || empty($_REQUEST['name']) ) {
         return false;
     }
+
     $name = $_REQUEST['name'];
+
+    if (isset($_REQUEST['id']) && $_REQUEST['id'] !== "") {
+        $id = $_REQUEST['id'];
+    } else {
+        $id = null;
+    }
+
     if (isset($_REQUEST['avatar'])) {
         $avatar = $_REQUEST['avatar'];
     } else {
         $avatar = '';
     }
+
     if (isset($_REQUEST['min_age'])) {
         $min_age = $_REQUEST['min_age'];
     } else {
         $min_age = 0;
     }
-    $ok = addProfile($name, $avatar, $min_age);
+
+    $ok = saveProfile($id, $name, $avatar, $min_age);
+    
     if ($ok != 0){
-        return ["success" => true, "message" => "Le profil '$name' a bien été ajouté !"];
+        return ["success" => true, "message" => "Le profil '$name' a bien été enregistré !"];
     } else {
         return false;
     }
+}
+function readProfilesController(){
+    $profiles = getAllProfiles();
+    if ($profiles === false) {
+        return false;
+    }
+    return $profiles;
 }
 
 

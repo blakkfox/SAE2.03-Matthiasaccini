@@ -1,63 +1,34 @@
 <?php
 
-
 define("HOST", "localhost");
-define("DBNAME", "accini1"); // Ton nom de base de données
-define("DBLOGIN", "accini1"); // Ton identifiant
-define("DBPWD", "accini1"); // Ton mot de passe (à remplir !)
+define("DBNAME", "accini1"); 
+define("DBLOGIN", "accini1"); 
+define("DBPWD", "accini1"); 
 
-/**
- * Récupère la liste complète des films dans la base de données.
- * * @return array Un tableau d'objets contenant toutes les informations des films.
- */
-function getAllMovies(){
-    // Connexion à la base de données
+function getAllMovies($ageLimite = null){
     $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
     
-    // Requête SQL pour récupérer tous les films
-    $sql = "SELECT id, name, year, length, description, director, id_category, image, trailer, min_age FROM Movie";
+    if ($ageLimite !== null) {
+        $sql = "SELECT id, name, year, length, description, director, id_category, image, trailer, min_age FROM Movie WHERE min_age <= :age";
+        $stmt = $cnx->prepare($sql);
+        $stmt->bindParam(':age', $ageLimite, PDO::PARAM_INT);
+    } else {
+        $sql = "SELECT id, name, year, length, description, director, id_category, image, trailer, min_age FROM Movie";
+        $stmt = $cnx->prepare($sql);
+    }
     
-    // Prépare la requête SQL
-    $stmt = $cnx->prepare($sql);
-    
-    // Exécute la requête SQL
     $stmt->execute();
-    
-    // Récupère les résultats de la requête sous forme d'objets
-    $res = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $res; // Retourne les résultats
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
-
-/**
- * Ajoute un nouveau film dans la base de données.
- *
- * @param string $n Le titre du film.
- * @param string $dir Le réalisateur du film.
- * @param int $y L'année de sortie du film.
- * @param int $len La durée du film en minutes.
- * @param string $desc Le synopsis du film.
- * @param int $cat L'ID de la catégorie du film.
- * @param int $age La restriction d'âge (0, 10, 12, 16, 18).
- * @param string $img Le nom du fichier image de l'affiche.
- * @param string $trl L'URL de la bande-annonce.
- * @return int Le nombre de lignes affectées par la requête de mise à jour.
- * * A SAVOIR: une requête SQL de type INSERT retourne le nombre de lignes insérées.
- * Si la requête a réussi, le nombre de lignes affectées sera 1.
- * Si la requête a échoué, le nombre de lignes affectées sera 0.
- */
 function addMovie($n, $dir, $y, $len, $desc, $cat, $age, $img, $trl){
-    // Connexion à la base de données
     $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD); 
     
-    // Requête SQL d'insertion avec des paramètres
     $sql = "INSERT INTO Movie (name, director, year, length, description, id_category, min_age, image, trailer) 
             VALUES (:name, :director, :year, :length, :description, :id_category, :min_age, :image, :trailer)";
             
-    // Prépare la requête SQL
     $stmt = $cnx->prepare($sql);
     
-    // Lie les paramètres aux valeurs
     $stmt->bindParam(':name', $n);
     $stmt->bindParam(':director', $dir);
     $stmt->bindParam(':year', $y);
@@ -68,12 +39,9 @@ function addMovie($n, $dir, $y, $len, $desc, $cat, $age, $img, $trl){
     $stmt->bindParam(':image', $img);
     $stmt->bindParam(':trailer', $trl);
     
-    // Exécute la requête SQL
     $stmt->execute();
     
-    // Récupère le nombre de lignes affectées par la requête
-    $res = $stmt->rowCount(); 
-    return $res; // Retourne le nombre de lignes affectées
+    return $stmt->rowCount(); 
 }
 
 function getMovieByID($id){
@@ -87,6 +55,7 @@ function getMovieByID($id){
     $res = $stmt->fetch(PDO::FETCH_OBJ);
     return $res;
 }
+
 function getAllCategories(){
     $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
     $sql = "SELECT id, name FROM Category";
@@ -101,6 +70,29 @@ function addProfile($n, $av, $age){
     $sql = "INSERT INTO Profile (name, avatar, min_age) VALUES (:name, :avatar, :min_age)";
     $stmt = $cnx->prepare($sql);
     
+    $stmt->bindParam(':name', $n);
+    $stmt->bindParam(':avatar', $av);
+    $stmt->bindParam(':min_age', $age);
+    
+    $stmt->execute();
+    return $stmt->rowCount(); 
+}
+
+function getAllProfiles(){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+    $sql = "SELECT id, name, avatar, min_age FROM Profile";
+    $stmt = $cnx->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+function saveProfile($id, $n, $av, $age){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD); 
+    
+    $sql = "REPLACE INTO Profile (id, name, avatar, min_age) VALUES (:id, :name, :avatar, :min_age)";
+    $stmt = $cnx->prepare($sql);
+    
+    $stmt->bindParam(':id', $id);
     $stmt->bindParam(':name', $n);
     $stmt->bindParam(':avatar', $av);
     $stmt->bindParam(':min_age', $age);

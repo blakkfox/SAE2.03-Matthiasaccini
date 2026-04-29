@@ -51,6 +51,9 @@ if ( isset($_REQUEST['todo']) ){
     case 'addprofile':
       $data = addProfileController();
       break;
+    case 'readprofiles':
+      $data = readProfilesController();
+      break;
       
     default: 
       // L'action demandée n'existe pas
