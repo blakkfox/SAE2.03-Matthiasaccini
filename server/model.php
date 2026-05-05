@@ -101,4 +101,14 @@ function saveProfile($id, $n, $av, $age){
     return $stmt->rowCount(); 
 }
 
+function addFavorite($id_profile, $id_movie){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+    $sql = "INSERT IGNORE INTO Favorite (id_profile, id_movie) VALUES (:id_profile, :id_movie)";
+    $stmt = $cnx->prepare($sql);
+    $stmt->bindParam(':id_profile', $id_profile);
+    $stmt->bindParam(':id_movie', $id_movie);
+    $stmt->execute();
+    return $stmt->rowCount();
+}
+
 ?>

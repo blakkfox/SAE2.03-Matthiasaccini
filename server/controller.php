@@ -123,5 +123,17 @@ function readProfilesController(){
     return $profiles;
 }
 
+function addFavoriteController(){
+    $id_profile = $_REQUEST['id_profile'];
+    $id_movie = $_REQUEST['id_movie'];
+    
+    $ok = addFavorite($id_profile, $id_movie);
+    
+    if ($ok != 0) {
+        return ["success" => true, "message" => "Le film a bien été ajouté à vos favoris !"];
+    } else {
+        return ["success" => false, "message" => "Ce film est déjà dans vos favoris."];
+    }
+}
 
 ?>

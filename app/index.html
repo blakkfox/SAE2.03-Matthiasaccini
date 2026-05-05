@@ -15,6 +15,7 @@
       import { DataMovie } from "./data/dataMovie.js";
       import { DataCategory } from "./data/dataCategory.js";
       import { DataProfile } from "./data/dataProfile.js";
+      import { DataFavorite } from "./data/dataFavorite.js";
 
       import { NavBar } from "./component/NavBar/script.js";
       import { Movie } from "./component/Movie/script.js";
@@ -26,7 +27,7 @@
       let dataProfiles = await DataProfile.read();
 
       const categoryNames = {};
-      for(let cat of dataCategories) {
+      for (let cat of dataCategories) {
         categoryNames[cat.id] = cat.name;
       }
 
@@ -37,7 +38,7 @@
           "Ceci est une base de projet pour la SAE2.03 édition 2025. Bonne chance !",
         );
       };
-      
+
       C.handlerDetail = async function (id) {
         let movieData = await DataMovie.requestDetails(id);
         let html = Detail.format(movieData);
@@ -46,62 +47,85 @@
       };
 
       C.handlerHome = function () {
-        C.handlerChangeProfile()
-      }
+        C.handlerChangeProfile();
+      };
 
       C.handlerChangeProfile = async function () {
         let select = document.querySelector("#profile-select");
         window.currentProfileId = select.value;
-        
+
         let ageLimite = 0;
-        
+
         if (window.currentProfileId !== "") {
-          let selectedProfile = dataProfiles.find(p => p.id == window.currentProfileId);
+          let selectedProfile = dataProfiles.find(
+            (p) => p.id == window.currentProfileId,
+          );
           if (selectedProfile) {
             ageLimite = selectedProfile.min_age;
           }
         }
 
         let moviesFiltres = await DataMovie.requestMovies(ageLimite);
-        
+
         V.renderCategories(moviesFiltres);
       };
 
+      C.handlerAddFavorite = async function (id_movie) {
+        if (window.currentProfileId == null || window.currentProfileId === "") {
+          alert("Veuillez d'abord sélectionner un profil en haut !");
+          return;
+        }
+        let res = await DataFavorite.add(window.currentProfileId, id_movie);
+        alert(res.message);
+      };
+
       C.start = function () {
-        V.renderNavBar("C.handlerAbout()", "C.handlerHome()", "C.handlerChangeProfile()", dataProfiles);
-        V.renderCategories(dataMovies); 
+        V.renderNavBar(
+          "C.handlerAbout()",
+          "C.handlerHome()",
+          "C.handlerChangeProfile()",
+          dataProfiles,
+        );
+        V.renderCategories(dataMovies);
       };
 
       window.V = {};
 
       V.renderNavBar = function (hAbout, hHome, hProfileChange, profiles) {
         let header = document.querySelector("#header");
-        header.innerHTML = NavBar.format(hAbout, hHome, hProfileChange, profiles, window.currentProfileId);
+        header.innerHTML = NavBar.format(
+          hAbout,
+          hHome,
+          hProfileChange,
+          profiles,
+          window.currentProfileId,
+        );
       };
-      
+
       V.renderMovie = function (data, css = "") {
         let movie = document.querySelector("#content");
         movie.innerHTML = Movie.format(data, css);
       };
-      
+
       V.renderDetail = function (hDetail, css = "") {
         let detail = document.querySelector("#content");
         detail.innerHTML = Detail.format(hDetail, css);
       };
-      
+
       V.renderCategories = function (movies) {
         let content = document.querySelector("#content");
 
         if (movies.length === 0) {
-          content.innerHTML = "<h3 style='margin: 3rem; text-align: center; color: var(--color-fg);'>Aucun film disponible pour votre tranche d'âge.</h3>";
+          content.innerHTML =
+            "<h3 style='margin: 3rem; text-align: center; color: var(--color-fg);'>Aucun film disponible pour votre tranche d'âge.</h3>";
           return;
         }
-        
+
         let moviesByCategory = {};
         for (let i = 0; i < movies.length; i++) {
           let movie = movies[i];
           let catId = movie.id_category;
-          
+
           if (moviesByCategory[catId] === undefined) {
             moviesByCategory[catId] = [];
           }
@@ -109,11 +133,11 @@
         }
 
         let htmlFinal = "";
-        
+
         for (let catId in moviesByCategory) {
-          let categoryName = categoryNames[catId] || "Autre"; 
+          let categoryName = categoryNames[catId] || "Autre";
           let categoryMovies = moviesByCategory[catId];
-          
+
           htmlFinal += MovieCategory.format(categoryName, categoryMovies);
         }
 
