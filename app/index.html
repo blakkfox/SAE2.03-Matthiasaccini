@@ -19,8 +19,11 @@
 
       import { NavBar } from "./component/NavBar/script.js";
       import { Movie } from "./component/Movie/script.js";
+      import { MovieCard } from "./component/MovieCard/script.js";
       import { Detail } from "./component/Detail/script.js";
       import { MovieCategory } from "./component/Category/script.js";
+      import { FavoriteCard } from "./component/FavoriteCard/script.js";
+      import { FeaturedCard } from "./component/FeaturedCard/script.js";
 
       let dataMovies = await DataMovie.requestMovies(0);
       let dataCategories = await DataCategory.requestCategories();
@@ -53,7 +56,6 @@
       C.handlerChangeProfile = async function () {
         let select = document.querySelector("#profile-select");
         window.currentProfileId = select.value;
-
         let ageLimite = 0;
 
         if (window.currentProfileId !== "") {
@@ -66,8 +68,9 @@
         }
 
         let moviesFiltres = await DataMovie.requestMovies(ageLimite);
+        let featuredFiltres = await DataMovie.requestFeatured(ageLimite);
 
-        V.renderCategories(moviesFiltres);
+        V.renderCategories(moviesFiltres, featuredFiltres);
       };
 
       C.handlerAddFavorite = async function (id_movie) {
@@ -79,23 +82,52 @@
         alert(res.message);
       };
 
-      C.start = function () {
+      C.handlerShowFavorites = async function () {
+        if (window.currentProfileId == null || window.currentProfileId === "") {
+          alert("Veuillez sélectionner un profil pour voir vos favoris.");
+        } else {
+          let favoriteMovies = await DataFavorite.readMovies(
+            window.currentProfileId,
+          );
+          V.renderFavorites(favoriteMovies);
+        }
+      };
+
+      C.handlerRemoveFavorite = async function (id_movie) {
+        let res = await DataFavorite.remove(window.currentProfileId, id_movie);
+        alert(res.message);
+        if (res.success) {
+          await C.handlerShowFavorites();
+        }
+      };
+
+      C.start = async function () {
+        let featuredInitial = await DataMovie.requestFeatured(0);
+
         V.renderNavBar(
           "C.handlerAbout()",
           "C.handlerHome()",
+          "C.handlerShowFavorites()",
           "C.handlerChangeProfile()",
           dataProfiles,
         );
-        V.renderCategories(dataMovies);
+        V.renderCategories(dataMovies, featuredInitial);
       };
 
       window.V = {};
 
-      V.renderNavBar = function (hAbout, hHome, hProfileChange, profiles) {
+      V.renderNavBar = function (
+        hAbout,
+        hHome,
+        hFavorites,
+        hProfileChange,
+        profiles,
+      ) {
         let header = document.querySelector("#header");
         header.innerHTML = NavBar.format(
           hAbout,
           hHome,
+          hFavorites,
           hProfileChange,
           profiles,
           window.currentProfileId,
@@ -112,36 +144,74 @@
         detail.innerHTML = Detail.format(hDetail, css);
       };
 
-      V.renderCategories = function (movies) {
+      V.renderCategories = function (movies, featuredMovies) {
+        let content = document.querySelector("#content");
+        let htmlFinal = "";
+
+        htmlFinal += "<section class='featured-section'>";
+        htmlFinal += "<h2 class='category__title'>Films mis en avant</h2>";
+        
+        if (!featuredMovies || featuredMovies.length === 0) {
+           htmlFinal += "<p class='msg-empty'>Aucun film mis en avant pour le moment.</p>";
+        } else {
+           htmlFinal += "<div class='featured-grid'>";
+           for (let m of featuredMovies) {
+              htmlFinal += FeaturedCard.format(m);
+           }
+           htmlFinal += "</div>";
+        }
+        htmlFinal += "</section>";
+
+        if (movies.length === 0) {
+          htmlFinal += "<h3 class='msg-empty'>Aucun film disponible pour votre tranche d'âge.</h3>";
+        } else {
+          let moviesByCategory = {};
+          for (let i = 0; i < movies.length; i++) {
+            let movie = movies[i];
+            let catId = movie.id_category;
+            if (moviesByCategory[catId] === undefined) {
+              moviesByCategory[catId] = [];
+            }
+            moviesByCategory[catId].push(movie);
+          }
+
+          for (let catId in moviesByCategory) {
+            let categoryName = categoryNames[catId] || "Autre"; 
+            let categoryMovies = moviesByCategory[catId];
+            
+            let htmlCartes = "";
+            for(let m of categoryMovies) {
+                htmlCartes += MovieCard.format(m); 
+            }
+            
+            htmlFinal += `<section class="category-container">
+                            <h2 class="category__title">${categoryName}</h2>
+                            <div class="category__content" style="display:flex; flex-wrap:wrap; gap:1rem;">
+                              ${htmlCartes}
+                            </div>
+                          </section>`;
+          }
+        }
+        content.innerHTML = htmlFinal;
+      };
+
+      V.renderFavorites = function (movies) {
         let content = document.querySelector("#content");
 
         if (movies.length === 0) {
           content.innerHTML =
-            "<h3 style='margin: 3rem; text-align: center; color: var(--color-fg);'>Aucun film disponible pour votre tranche d'âge.</h3>";
-          return;
-        }
+            "<h3 class='msg-empty'>Votre liste de favoris est vide.</h3>";
+        } else {
+          let htmlFinal = "<h2 class='category__title'>Mes Favoris</h2>";
+          htmlFinal += "<div class='favorites-grid'>";
 
-        let moviesByCategory = {};
-        for (let i = 0; i < movies.length; i++) {
-          let movie = movies[i];
-          let catId = movie.id_category;
-
-          if (moviesByCategory[catId] === undefined) {
-            moviesByCategory[catId] = [];
+          for (let i = 0; i < movies.length; i++) {
+            htmlFinal += FavoriteCard.format(movies[i]);
           }
-          moviesByCategory[catId].push(movie);
+
+          htmlFinal += "</div>";
+          content.innerHTML = htmlFinal;
         }
-
-        let htmlFinal = "";
-
-        for (let catId in moviesByCategory) {
-          let categoryName = categoryNames[catId] || "Autre";
-          let categoryMovies = moviesByCategory[catId];
-
-          htmlFinal += MovieCategory.format(categoryName, categoryMovies);
-        }
-
-        content.innerHTML = htmlFinal;
       };
 
       C.start();

@@ -1,0 +1,10 @@
+<div class="movieCard-container">
+  <div onclick="C.handlerDetail('{{id}}')">
+    <img src="../server/images/{{image}}" alt="{{name}}" class="movieCard__image"/>
+    <h3 class="movieCard__title">{{name}}</h3>
+  </div>
+  
+  <button onclick="C.handlerRemoveFavorite('{{id}}')">
+    Retirer des favoris
+  </button>
+</div>

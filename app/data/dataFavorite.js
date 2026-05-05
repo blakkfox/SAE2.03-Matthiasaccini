@@ -13,4 +13,20 @@ DataFavorite.add = async function(id_profile, id_movie){
     return data;
 }
 
+DataFavorite.remove = async function(id_profile, id_movie){
+    let fd = new FormData();
+    fd.append('id_profile', id_profile);
+    fd.append('id_movie', id_movie);
+
+    let config = { method: "POST", body: fd };
+    let answer = await fetch(HOST_URL + "/server/script.php?todo=removefavorite", config);
+    let data = await answer.json();
+    return data;
+}
+
+DataFavorite.readMovies = async function(id_profile){
+    let answer = await fetch(HOST_URL + "/server/script.php?todo=readfavoritemovies&id_profile=" + id_profile);
+    let data = await answer.json();
+    return data;
+}
 export { DataFavorite };

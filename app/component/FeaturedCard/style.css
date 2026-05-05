@@ -1,0 +1,7 @@
+.movie__card{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1rem;
+}

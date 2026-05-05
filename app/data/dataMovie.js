@@ -15,5 +15,10 @@ DataMovie.requestDetails = async function (id) {
     let data = JSON.parse(texteBrut);
     return data;
 }
+DataMovie.requestFeatured = async function(age = 0){
+    let answer = await fetch(HOST_URL + "/server/script.php?todo=readfeaturedmovies&age=" + age);
+    let data = await answer.json();
+    return data;
+}
 
 export {DataMovie};

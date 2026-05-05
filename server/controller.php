@@ -136,4 +136,37 @@ function addFavoriteController(){
     }
 }
 
+function removeFavoriteController(){
+    $id_profile = $_REQUEST['id_profile'];
+    $id_movie = $_REQUEST['id_movie'];
+    
+    $ok = removeFavorite($id_profile, $id_movie);
+    
+    if ($ok != 0) {
+        return ["success" => true, "message" => "Le film a été retiré de vos favoris."];
+    } else {
+        return ["success" => false, "message" => "Erreur lors de la suppression."];
+    }
+}
+
+function readFavoriteMoviesController(){
+    if (isset($_REQUEST['id_profile']) && $_REQUEST['id_profile'] !== "") {
+        $id_profile = $_REQUEST['id_profile'];
+        $movies = getFavoriteMovies($id_profile);
+        return $movies;
+    } else {
+        return []; 
+    }
+}
+
+function readFeaturedMoviesController(){
+    if (isset($_REQUEST['age']) && $_REQUEST['age'] !== "") {
+        $age = intval($_REQUEST['age']);
+        $movies = getFeaturedMovies($age);
+    } else {
+        $movies = getFeaturedMovies();
+    }
+    return $movies;
+}
+
 ?>

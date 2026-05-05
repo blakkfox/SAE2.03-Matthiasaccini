@@ -111,4 +111,39 @@ function addFavorite($id_profile, $id_movie){
     return $stmt->rowCount();
 }
 
+function removeFavorite($id_profile, $id_movie){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+    $sql = "DELETE FROM Favorite WHERE id_profile = :id_profile AND id_movie = :id_movie";
+    $stmt = $cnx->prepare($sql);
+    $stmt->bindParam(':id_profile', $id_profile);
+    $stmt->bindParam(':id_movie', $id_movie);
+    $stmt->execute();
+    return $stmt->rowCount(); 
+}
+
+function getFavoriteMovies($id_profile){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+    $sql = "SELECT Movie.* FROM Movie INNER JOIN Favorite ON Movie.id = Favorite.id_movie WHERE Favorite.id_profile = :id_profile";
+    $stmt = $cnx->prepare($sql);
+    $stmt->bindParam(':id_profile', $id_profile);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+function getFeaturedMovies($ageLimite = null){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+    
+    if ($ageLimite !== null) {
+        $sql = "SELECT * FROM Movie WHERE featured = 1 AND min_age <= :age";
+        $stmt = $cnx->prepare($sql);
+        $stmt->bindParam(':age', $ageLimite, PDO::PARAM_INT);
+    } else {
+        $sql = "SELECT * FROM Movie WHERE featured = 1";
+        $stmt = $cnx->prepare($sql);
+    }
+    
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
 ?>

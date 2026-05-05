@@ -57,6 +57,16 @@ if ( isset($_REQUEST['todo']) ){
     case 'addfavorite':
       $data = addFavoriteController();
       break;
+    case 'removefavorite':
+      $data = removeFavoriteController();
+      break;
+    case 'readfavoritemovies':
+      $data = readFavoriteMoviesController();
+      break;
+    case 'readfeaturedmovies':
+      $data = readFeaturedMoviesController();
+      break;
+    
       
     default: 
       // L'action demandée n'existe pas
