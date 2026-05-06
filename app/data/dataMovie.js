@@ -20,5 +20,10 @@ DataMovie.requestFeatured = async function(age = 0){
     let data = await answer.json();
     return data;
 }
+DataMovie.search = async function(keyword, age = 0){
+    let answer = await fetch(HOST_URL + "/server/script.php?todo=searchmovies&keyword=" + encodeURIComponent(keyword) + "&age=" + age);
+    let data = await answer.json();
+    return data;
+}
 
 export {DataMovie};

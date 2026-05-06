@@ -169,4 +169,39 @@ function readFeaturedMoviesController(){
     return $movies;
 }
 
+function readStatsController(){
+    return getStatistics();
+}
+
+function searchMoviesController(){
+    // Si la recherche est vide, on renvoie un tableau vide
+    if (!isset($_REQUEST['keyword']) || empty($_REQUEST['keyword'])) {
+        return [];
+    }
+    
+    $keyword = $_REQUEST['keyword'];
+    
+
+    if (isset($_REQUEST['age']) && $_REQUEST['age'] !== "") {
+        $age = intval($_REQUEST['age']);
+    } else {
+        $age = null;
+    }
+    
+    return searchMovies($keyword, $age);
+}
+
+function setFeaturedStatusController(){
+    $id = $_REQUEST['id'];
+    $status = $_REQUEST['status'];
+    
+    $ok = setFeaturedStatus($id, $status);
+    
+    if ($ok != 0) {
+        return ["success" => true, "message" => "Le statut du film a été mis à jour avec succès !"];
+    } else {
+        return ["success" => false, "message" => "Aucune modification apportée."];
+    }
+}
+
 ?>

@@ -66,7 +66,15 @@ if ( isset($_REQUEST['todo']) ){
     case 'readfeaturedmovies':
       $data = readFeaturedMoviesController();
       break;
-    
+    case 'readstats':
+      $data = readStatsController();
+      break;
+    case 'searchmovies':
+      $data = searchMoviesController();
+      break;
+    case 'setfeatured':
+      $data = setFeaturedStatusController();
+      break;
       
     default: 
       // L'action demandée n'existe pas

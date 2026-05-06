@@ -16,6 +16,7 @@
       import { DataCategory } from "./data/dataCategory.js";
       import { DataProfile } from "./data/dataProfile.js";
       import { DataFavorite } from "./data/dataFavorite.js";
+      import { DataStats } from "./data/dataStats.js";
 
       import { NavBar } from "./component/NavBar/script.js";
       import { Movie } from "./component/Movie/script.js";
@@ -24,6 +25,7 @@
       import { MovieCategory } from "./component/Category/script.js";
       import { FavoriteCard } from "./component/FavoriteCard/script.js";
       import { FeaturedCard } from "./component/FeaturedCard/script.js";
+      import { Stats } from "./component/Stats/script.js";
 
       let dataMovies = await DataMovie.requestMovies(0);
       let dataCategories = await DataCategory.requestCategories();
@@ -101,6 +103,32 @@
         }
       };
 
+      C.handlerShowStats = async function () {
+        let statsData = await DataStats.read();
+        V.renderStats(statsData);
+      };
+
+      C.handlerSearch = async function (keyword) {
+        if (keyword.trim() === "") {
+          await C.handlerChangeProfile();
+          return;
+        }
+
+        let ageLimite = 0;
+        if (window.currentProfileId && window.currentProfileId !== "") {
+          let selectedProfile = dataProfiles.find(
+            (p) => p.id == window.currentProfileId,
+          );
+          if (selectedProfile) {
+            ageLimite = selectedProfile.min_age;
+          }
+        }
+
+        let searchResults = await DataMovie.search(keyword, ageLimite);
+
+        V.renderSearch(searchResults, keyword);
+      };
+
       C.start = async function () {
         let featuredInitial = await DataMovie.requestFeatured(0);
 
@@ -108,30 +136,21 @@
           "C.handlerAbout()",
           "C.handlerHome()",
           "C.handlerShowFavorites()",
+          "C.handlerShowStats()",
+          "C.handlerSearch(this.value)",
           "C.handlerChangeProfile()",
           dataProfiles,
         );
+
         V.renderCategories(dataMovies, featuredInitial);
       };
 
       window.V = {};
 
-      V.renderNavBar = function (
-        hAbout,
-        hHome,
-        hFavorites,
-        hProfileChange,
-        profiles,
-      ) {
+      V.renderNavBar = function (hAbout, hHome, hFavorites, hStats, hSearch, hProfileChange, profiles) {
         let header = document.querySelector("#header");
-        header.innerHTML = NavBar.format(
-          hAbout,
-          hHome,
-          hFavorites,
-          hProfileChange,
-          profiles,
-          window.currentProfileId,
-        );
+
+        header.innerHTML = NavBar.format(hAbout, hHome, hFavorites, hStats, hSearch, hProfileChange, profiles, window.currentProfileId);
       };
 
       V.renderMovie = function (data, css = "") {
@@ -150,20 +169,22 @@
 
         htmlFinal += "<section class='featured-section'>";
         htmlFinal += "<h2 class='category__title'>Films mis en avant</h2>";
-        
+
         if (!featuredMovies || featuredMovies.length === 0) {
-           htmlFinal += "<p class='msg-empty'>Aucun film mis en avant pour le moment.</p>";
+          htmlFinal +=
+            "<p class='msg-empty'>Aucun film mis en avant pour le moment.</p>";
         } else {
-           htmlFinal += "<div class='featured-grid'>";
-           for (let m of featuredMovies) {
-              htmlFinal += FeaturedCard.format(m);
-           }
-           htmlFinal += "</div>";
+          htmlFinal += "<div class='featured-grid'>";
+          for (let m of featuredMovies) {
+            htmlFinal += FeaturedCard.format(m);
+          }
+          htmlFinal += "</div>";
         }
         htmlFinal += "</section>";
 
         if (movies.length === 0) {
-          htmlFinal += "<h3 class='msg-empty'>Aucun film disponible pour votre tranche d'âge.</h3>";
+          htmlFinal +=
+            "<h3 class='msg-empty'>Aucun film disponible pour votre tranche d'âge.</h3>";
         } else {
           let moviesByCategory = {};
           for (let i = 0; i < movies.length; i++) {
@@ -176,14 +197,14 @@
           }
 
           for (let catId in moviesByCategory) {
-            let categoryName = categoryNames[catId] || "Autre"; 
+            let categoryName = categoryNames[catId] || "Autre";
             let categoryMovies = moviesByCategory[catId];
-            
+
             let htmlCartes = "";
-            for(let m of categoryMovies) {
-                htmlCartes += MovieCard.format(m); 
+            for (let m of categoryMovies) {
+              htmlCartes += MovieCard.format(m);
             }
-            
+
             htmlFinal += `<section class="category-container">
                             <h2 class="category__title">${categoryName}</h2>
                             <div class="category__content" style="display:flex; flex-wrap:wrap; gap:1rem;">
@@ -212,6 +233,28 @@
           htmlFinal += "</div>";
           content.innerHTML = htmlFinal;
         }
+      };
+
+      V.renderStats = function (statsData) {
+        let content = document.querySelector("#content");
+        content.innerHTML = Stats.format(statsData);
+      };
+
+      V.renderSearch = function (movies, keyword) {
+        let content = document.querySelector("#content");
+        let htmlFinal = `<h2 class="category__title">Résultats pour "${keyword}"</h2>`;
+
+        if (movies.length === 0) {
+          htmlFinal += `<h3 class="msg-empty">Aucun film ne correspond à votre recherche.</h3>`;
+        } else {
+          htmlFinal += `<div class="favorites-grid">`;
+          for (let m of movies) {
+            htmlFinal += MovieCard.format(m);
+          }
+          htmlFinal += `</div>`;
+        }
+
+        content.innerHTML = htmlFinal;
       };
 
       C.start();

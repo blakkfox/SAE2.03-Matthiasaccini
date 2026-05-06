@@ -45,4 +45,21 @@ DataMovie.add = async function (fdata) {
     return data;
 }
 
+DataMovie.search = async function(keyword){
+    let answer = await fetch(HOST_URL + "/server/script.php?todo=searchmovies&keyword=" + encodeURIComponent(keyword));
+    let data = await answer.json();
+    return data;
+}
+
+DataMovie.setFeatured = async function(id, status){
+    let fd = new FormData();
+    fd.append('id', id);
+    fd.append('status', status);
+
+    let config = { method: "POST", body: fd };
+    let answer = await fetch(HOST_URL + "/server/script.php?todo=setfeatured", config);
+    let data = await answer.json();
+    return data;
+}
+
 export { DataMovie };

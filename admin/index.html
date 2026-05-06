@@ -9,15 +9,20 @@
   <body>
     <section id="log"></section>
     
-    <div style="display: flex; gap: 2rem; align-items: flex-start; padding: 1rem;">
+    <div class="admin-layout-top">
         <section id="movie-form"></section>
         <section id="profile-form"></section>
+    </div>
+    
+    <div class="admin-layout-bottom">
+        <section id="featured-form-section"></section>
     </div>
 
     <script type="module">
       import { Log } from "./component/Log/script.js";
       import { MovieForm } from "./component/MovieForm/script.js";
       import { ProfileForm } from "./component/ProfileForm/script.js"; 
+      import { FeaturedForm } from "./component/FeaturedForm/script.js";
 
       import { DataMovie } from "./data/dataMovie.js";
       import { DataProfile } from "./data/dataProfile.js"; 
@@ -29,6 +34,7 @@
         V.renderLog("Démarrage de l'administration");
         V.renderFormMovie("C.handlerAddMovie(event)");
         V.renderFormProfile("C.handlerSaveProfile(event)", "C.handlerSelectProfile()", window.profilesData);
+        V.renderFormFeatured("C.handlerSearchFeatured(this.value)");
       };
 
       C.handlerAddMovie = async function () {
@@ -75,6 +81,54 @@
         }
       };
 
+      C.handlerSearchFeatured = async function (keyword) {
+        let container = document.querySelector("#featured-results-container");
+
+        if (keyword.trim() === "") {
+          container.innerHTML = "<p class='msg-empty'>Tapez un titre pour rechercher des films...</p>";
+          return;
+        }
+
+        let movies = await DataMovie.search(keyword);
+        let htmlResults = "";
+
+        if (movies.length === 0) {
+          htmlResults = "<p class='msg-empty'>Aucun film ne correspond à votre recherche.</p>";
+        } else {
+          htmlResults = "<div class='featured-list'>";
+          for (let m of movies) {
+            let isFeatured = (m.featured == 1);
+            let btnClass = isFeatured ? "btn-toggle-off" : "btn-toggle-on";
+            let btnText = isFeatured ? "Retirer" : "Mettre en avant";
+            let nextStatus = isFeatured ? 0 : 1;
+            let activeClass = isFeatured ? "featured-item--active" : "";
+
+            htmlResults += `
+            <div class="featured-item ${activeClass}">
+                <div>
+                    <strong>${m.name}</strong> 
+                    <span class="featured-item__meta">(ID Catégorie: ${m.id_category} | Année: ${m.year})</span>
+                </div>
+                <button class="${btnClass}" onclick="C.handlerToggleFeatured(${m.id}, ${nextStatus})">
+                    ${btnText}
+                </button>
+            </div>`;
+          }
+          htmlResults += "</div>";
+        }
+
+        container.innerHTML = htmlResults;
+      };
+
+      C.handlerToggleFeatured = async function(id, status) {
+        let res = await DataMovie.setFeatured(id, status);
+
+        V.renderLog(res.message);
+
+        let currentKeyword = document.querySelector("#search-featured").value;
+        await C.handlerSearchFeatured(currentKeyword);
+      };
+
       window.V = {};
 
       V.renderLog = function (txt) {
@@ -90,6 +144,11 @@
       V.renderFormProfile = async function (hSubmit, hSelect, profiles) {
         let content = document.querySelector("#profile-form");
         content.innerHTML = await ProfileForm.format(hSubmit, hSelect, profiles);
+      };
+
+      V.renderFormFeatured = async function (hSearch) {
+        let content = document.querySelector("#featured-form-section");
+        content.innerHTML = await FeaturedForm.format(hSearch);
       };
 
       C.start();

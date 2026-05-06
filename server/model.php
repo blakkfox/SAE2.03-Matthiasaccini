@@ -146,4 +146,65 @@ function getFeaturedMovies($ageLimite = null){
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
+function getStatistics(){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+    $stats = [];
+
+    $stmt = $cnx->query("SELECT COUNT(id) FROM Profile");
+    $stats['totalProfiles'] = $stmt->fetchColumn();
+
+    $stmt = $cnx->query("SELECT COUNT(*) FROM Favorite");
+    $totalFavs = $stmt->fetchColumn();
+    if ($stats['totalProfiles'] > 0) {
+        $stats['avgFavs'] = round($totalFavs / $stats['totalProfiles'], 1); 
+    } else {
+        $stats['avgFavs'] = 0;
+    }
+
+    $stmt = $cnx->query("SELECT COUNT(id) FROM Movie");
+    $stats['totalMovies'] = $stmt->fetchColumn();
+
+    $sql = "SELECT m.name FROM Favorite f INNER JOIN Movie m ON f.id_movie = m.id GROUP BY f.id_movie ORDER BY COUNT(*) DESC LIMIT 1";
+    $stmt = $cnx->query($sql);
+    $topMovie = $stmt->fetchColumn();
+    $stats['topMovie'] = $topMovie ? $topMovie : "Aucun"; 
+
+    $sql = "SELECT c.name FROM Favorite f INNER JOIN Movie m ON f.id_movie = m.id INNER JOIN Category c ON m.id_category = c.id GROUP BY c.id ORDER BY COUNT(*) DESC LIMIT 1";
+    $stmt = $cnx->query($sql);
+    $topCategory = $stmt->fetchColumn();
+    $stats['topCategory'] = $topCategory ? $topCategory : "Aucune";
+
+    return $stats;
+}
+
+function searchMovies($keyword, $ageLimite = null){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+
+    $keywordWithJokers = "%" . $keyword . "%";
+
+    if ($ageLimite !== null) {
+        $sql = "SELECT * FROM Movie WHERE name LIKE :keyword AND min_age <= :age";
+        $stmt = $cnx->prepare($sql);
+        $stmt->bindParam(':keyword', $keywordWithJokers);
+        $stmt->bindParam(':age', $ageLimite, PDO::PARAM_INT);
+    } else {
+        $sql = "SELECT * FROM Movie WHERE name LIKE :keyword";
+        $stmt = $cnx->prepare($sql);
+        $stmt->bindParam(':keyword', $keywordWithJokers);
+    }
+    
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+function setFeaturedStatus($id, $status){
+    $cnx = new PDO("mysql:host=".HOST.";dbname=".DBNAME.";charset=utf8", DBLOGIN, DBPWD);
+    $sql = "UPDATE Movie SET featured = :status WHERE id = :id";
+    $stmt = $cnx->prepare($sql);
+    $stmt->bindParam(':status', $status, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->rowCount();
+}
+
 ?>
