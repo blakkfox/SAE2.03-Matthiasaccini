@@ -46,7 +46,11 @@
 
       C.handlerDetail = async function (id) {
         let movieData = await DataMovie.requestDetails(id);
-        let html = Detail.format(movieData);
+        
+        let nomCategorie = categoryNames[movieData.id_category] || "Inconnu";
+
+        let html = Detail.format(movieData, nomCategorie);
+        
         let zonePrincipale = document.querySelector("#content");
         zonePrincipale.innerHTML = html;
       };
@@ -147,10 +151,27 @@
 
       window.V = {};
 
-      V.renderNavBar = function (hAbout, hHome, hFavorites, hStats, hSearch, hProfileChange, profiles) {
+      V.renderNavBar = function (
+        hAbout,
+        hHome,
+        hFavorites,
+        hStats,
+        hSearch,
+        hProfileChange,
+        profiles,
+      ) {
         let header = document.querySelector("#header");
 
-        header.innerHTML = NavBar.format(hAbout, hHome, hFavorites, hStats, hSearch, hProfileChange, profiles, window.currentProfileId);
+        header.innerHTML = NavBar.format(
+          hAbout,
+          hHome,
+          hFavorites,
+          hStats,
+          hSearch,
+          hProfileChange,
+          profiles,
+          window.currentProfileId,
+        );
       };
 
       V.renderMovie = function (data, css = "") {
@@ -207,7 +228,7 @@
 
             htmlFinal += `<section class="category-container">
                             <h2 class="category__title">${categoryName}</h2>
-                            <div class="category__content" style="display:flex; flex-wrap:wrap; gap:1rem;">
+                            <div class="category__content">
                               ${htmlCartes}
                             </div>
                           </section>`;
@@ -221,16 +242,17 @@
 
         if (movies.length === 0) {
           content.innerHTML =
-            "<h3 class='msg-empty'>Votre liste de favoris est vide.</h3>";
+            "<section class='page-container'><h3 class='msg-empty'>Votre liste de favoris est vide.</h3></section>";
         } else {
-          let htmlFinal = "<h2 class='category__title'>Mes Favoris</h2>";
+          let htmlFinal = "<section class='page-container'>";
+          htmlFinal += "<h2 class='page-title'>Mes Favoris</h2>";
           htmlFinal += "<div class='favorites-grid'>";
 
           for (let i = 0; i < movies.length; i++) {
             htmlFinal += FavoriteCard.format(movies[i]);
           }
 
-          htmlFinal += "</div>";
+          htmlFinal += "</div></section>";
           content.innerHTML = htmlFinal;
         }
       };
@@ -242,7 +264,9 @@
 
       V.renderSearch = function (movies, keyword) {
         let content = document.querySelector("#content");
-        let htmlFinal = `<h2 class="category__title">Résultats pour "${keyword}"</h2>`;
+
+        let htmlFinal = `<section class='page-container'>`;
+        htmlFinal += `<h2 class="page-title">Résultats pour "${keyword}"</h2>`;
 
         if (movies.length === 0) {
           htmlFinal += `<h3 class="msg-empty">Aucun film ne correspond à votre recherche.</h3>`;
@@ -254,6 +278,7 @@
           htmlFinal += `</div>`;
         }
 
+        htmlFinal += `</section>`;
         content.innerHTML = htmlFinal;
       };
 

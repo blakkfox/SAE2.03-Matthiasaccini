@@ -9,3 +9,6 @@
 @import "../component/Movie/style.css" layer(components);
 @import "../component/Detail/style.css" layer(components);
 @import "../component/Category/style.css" layer(components);
+@import "../component/FeaturedCard/style.css" layer(components);
+@import "../component/Stats/style.css" layer(components);
+@import "../component/FavoriteCard/style.css" layer(components);

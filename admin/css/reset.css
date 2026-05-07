@@ -9,3 +9,41 @@ ul {
   margin: 0;
   list-style: none;
 }
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--ff-sans);
+  margin: 0;
+  padding: 2rem;
+}
+
+/* Mise en page en colonnes pour le haut */
+.admin-layout-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.admin-layout-bottom {
+  margin-top: 2rem;
+}
+
+/* Style commun pour tous les blocs (Log, Formulaires) */
+section {
+  background-color: var(--color-card);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-gray);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: var(--color-accent);
+  border-bottom: 1px solid var(--color-gray);
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.5rem;
+}

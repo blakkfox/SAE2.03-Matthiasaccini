@@ -1,7 +1,61 @@
-.movie__card{
-    display:flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin: 1rem;
+/* On ajoute la marge sur toute la section */
+.featured-section {
+  padding-left: 3rem;
+  padding-right: 3rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.featured-section .category__title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-fg);
+}
+
+.featured-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.featuredCard-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  min-height: 400px;
+  background-color: transparent;
+  cursor: pointer;
+  gap: 2rem;
+}
+
+.featuredCard__info {
+  flex: 1;
+  color: var(--color-fg);
+}
+
+.featuredCard__title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.featuredCard__desc {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: var(--color-gray-light);
+  line-height: 1.5;
+  max-width: 500px;
+}
+
+.featuredCard__image-box {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.featuredCard__image {
+  max-height: 450px;
+  width: auto;
+  object-fit: contain;
 }

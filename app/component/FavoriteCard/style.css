@@ -1,0 +1,27 @@
+/* --- Conteneur global pour les pages (Favoris, Recherche) --- */
+.page-container {
+    padding: 2rem 3rem;
+}
+
+/* --- Style du titre des pages --- */
+.page-title {
+    color: var(--color-fg);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    border-bottom: none;
+}
+
+/* --- Grille pour afficher les cartes --- */
+.favorites-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+/* --- Le hover rouge pour le bouton de suppression (Spécifique aux favoris) --- */
+.movieCard-wrapper button[onclick^="C.handlerRemoveFavorite"]:hover {
+    background-color: #ff3333; 
+    color: white;
+}

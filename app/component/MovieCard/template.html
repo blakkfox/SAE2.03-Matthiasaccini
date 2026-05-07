@@ -1,14 +1,12 @@
-<div
-  class="movieCard-container"
-  onclick="C.handlerDetail('{{id}}')"
-  style="cursor: pointer"
->
-  <div class="movieCard__img-container">
-    <img class="movieCard__img" src="{{image}}" alt="image de film" />
+<div class="movieCard-wrapper">
+  <div class="movieCard-container" onclick="C.handlerDetail('{{id}}')">
+    <div class="movieCard__img-container">
+      <img class="movieCard__img" src="{{image}}" alt="image de film" />
+    </div>
+    <div class="movieCard__title-container">
+      <h2 class="movieCard__title">{{name}}</h2>
+    </div>
   </div>
-  <div class="movieCard__title-container">
-    <h2 class="movieCard__title">{{name}}</h2>
-  </div>
+  
+  <button class="btn-cyan" onclick="C.handlerAddFavorite('{{id}}')">▶ AJOUTER AUX FAVORIS</button>
 </div>
-<button onclick="C.handlerAddFavorite('{{id}}')">Ajouter aux favoris</button>
-

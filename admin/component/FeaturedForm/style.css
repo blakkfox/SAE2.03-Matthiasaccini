@@ -1,9 +1,20 @@
-.movie-form-container{
+.featured-item {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    border-bottom: 1px solid var(--color-gray);
+    background-color: rgba(255,255,255,0.02);
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
 }
 
-.form-group{
-    display: flex;
-    flex-direction: column;
+.featured-item--active {
+    border-left: 4px solid var(--color-accent);
+}
+
+.featured-item__meta {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-gray-light);
 }

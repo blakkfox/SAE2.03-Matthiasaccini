@@ -1,14 +1,9 @@
-<div class="featuredCard-container">
-  <div class="featuredCard__image-box" onclick="C.handlerDetail('{{id}}')">
-    <img src="../server/images/{{image}}" alt="Affiche {{name}}" class="featuredCard__image"/>
-  </div>
-  
+<div class="featuredCard-container" onclick="C.handlerDetail('{{id}}')">
   <div class="featuredCard__info">
-    <h3 class="featuredCard__title" onclick="C.handlerDetail('{{id}}')">{{name}}</h3>
+    <h3 class="featuredCard__title">{{name}}</h3>
     <p class="featuredCard__desc">{{description}}</p>
-    
-    <button class="btn-primary" onclick="C.handlerAddFavorite('{{id}}')">
-      Ajouter aux favoris
-    </button>
+  </div>
+  <div class="featuredCard__image-wrapper">
+    <img src="../server/images/{{image}}" alt="{{name}}" class="featuredCard__image"/>
   </div>
 </div>

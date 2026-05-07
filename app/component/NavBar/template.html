@@ -1,16 +1,25 @@
 <nav class="navbar font-sans">
-  <ul class="navbar__list" style="display:flex; align-items:center; gap:1.5rem;">
+  <div class="navbar__left">
+    <div class="logo" onclick="{{hHome}}">
+      <span class="logo-rai">Raf</span><span class="logo-play">Play</span>
+    </div>
+  </div>
+  
+  <ul class="navbar__center">
     <li class="navbar__item" onclick="{{hHome}}">Accueil</li>
     <li class="navbar__item" onclick="{{hAbout}}">About</li>
     <li class="navbar__item" onclick="{{hFavorites}}">Mes Favoris</li>
     <li class="navbar__item" onclick="{{hStats}}">Statistiques</li>
+  </ul>
+  
+  <div class="navbar__right">
     <input type="search" class="navbar__search" placeholder="Rechercher un film..." onkeyup="{{hSearch}}">
-    <li class="navbar__profile-selector">
-      <label for="profile-select">Profil :</label>
+    <div class="navbar__profile-selector">
+      <label for="profile-select" style="margin-right: 0.5rem;">Profil :</label>
       <select id="profile-select" onchange="{{hProfileChange}}">
         <option value="">-- Choisir --</option>
         {{profileOptions}}
       </select>
-    </li>
-  </ul>
+    </div>
+  </div>
 </nav>

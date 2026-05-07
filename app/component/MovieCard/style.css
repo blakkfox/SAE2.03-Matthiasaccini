@@ -1,13 +1,31 @@
+.movieCard-wrapper {
+    width: 15rem;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 .movieCard-container {
-    width: 15rem; 
     display: flex;
     flex-direction: column; 
     gap: 0.5rem; 
+    cursor: pointer;
 }
 
 .movieCard__img-container {
     width: 100%;
-    height: 20rem; 
+    aspect-ratio: 2 / 3;
+    border-radius: 4px;
+    overflow: hidden;
+    /* Box-shadow invisible par défaut */
+    box-shadow: 0 0 0 0 transparent;
+    transition: box-shadow 0.2s ease;
+}
+
+/* Le fameux hover qui rajoute le contour bleu RaiPlay */
+.movieCard-container:hover .movieCard__img-container {
+    border: 3px solid var(--color-accent);
 }
 
 .movieCard__img {
@@ -15,12 +33,38 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 10px;
 }
 
-.movieCard__title-container{
-    margin: 0.5rem;
+.movieCard__title-container {
+    margin-top: 0.2rem;
 }
-.movieCard__title{
-    margin: 0rem;
+
+.movieCard__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Style du bouton bleu façon RIPRODUCI */
+.btn-cyan {
+    background-color: var(--color-accent);
+    color: #050510; /* Texte sombre */
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    width: 100%; 
+    text-transform: uppercase;
+    transition: background-color 0.2s ease;
+    margin-top: 0.2rem;
+}
+
+.btn-cyan:hover {
+    background-color: #0099c2; /* Bleu légèrement plus foncé au survol */
 }
